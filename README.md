@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Extension Hub</h1>
+  <img src="docs/assets/logo-readme.svg" alt="Extension Hub" width="240" height="80">
   <p>A source-neutral directory and open data feed for GNOME Shell extensions.</p>
   <a href="https://extension-hub.pages.dev/"><img src="https://img.shields.io/badge/website-extension--hub.pages.dev-3584e4?logo=gnome&amp;logoColor=white" alt="Live site"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/butu/extensionhub" alt="License"></a>
