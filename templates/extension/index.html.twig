@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Extension Hub - Discover GNOME Shell Extensions
+{% endblock %}
+
+{% block body %}
+    {# App mount point for client-side rendering #}
+    <div id="app" data-feed-url="{{ asset('data/extensions.json') }}"></div>
+{% endblock %}

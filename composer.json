@@ -1,0 +1,97 @@
+{
+    "name": "butu/extensionhub",
+    "type": "project",
+    "license": "MIT",
+    "description": "Extension Hub - an open, source-neutral directory for GNOME Shell extensions",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=8.2",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "doctrine/dbal": "^3.10.6",
+        "doctrine/doctrine-bundle": "^2.19",
+        "doctrine/doctrine-migrations-bundle": "^3.7",
+        "doctrine/orm": "^3.6.8",
+        "pentatrion/vite-bundle": "^8.2.4",
+        "symfony/asset": "7.4.*",
+        "symfony/console": "7.4.*",
+        "symfony/dotenv": "7.4.*",
+        "symfony/flex": "^2.11",
+        "symfony/framework-bundle": "7.4.*",
+        "symfony/http-client": "7.4.*",
+        "symfony/monolog-bundle": "^3.11.2",
+        "symfony/process": "7.4.*",
+        "symfony/runtime": "7.4.*",
+        "symfony/string": "7.4.*",
+        "symfony/twig-bundle": "7.4.*",
+        "symfony/yaml": "7.4.*",
+        "twig/twig": "^2.12|^3.28"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true,
+            "webprofil/todos": true
+        },
+        "bump-after-update": true,
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*"
+    },
+    "scripts": {
+        "deploy": "dep deploy production",
+        "deploy:unlock": "dep deploy:unlock production",
+        "db:pull": "dep db:pull production",
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "7.4.*"
+        }
+    },
+    "require-dev": {
+        "deployer/deployer": "^7",
+        "phpunit/phpunit": "^9.6.36",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/debug-bundle": "7.4.*",
+        "symfony/maker-bundle": "^1.67",
+        "symfony/phpunit-bridge": "^7.4.16",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*",
+        "webprofil/todos": "^1.1"
+    }
+}

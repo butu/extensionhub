@@ -1,0 +1,2941 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/*
+ * Generated, committed build output must never act as a Tailwind source.
+ * Scanning it makes the CSS self-referential: every utility it already
+ * contains keeps itself alive, so unused CSS can never be dropped again.
+ */
+@source not "../dist";
+@source not "../public/build";
+
+/* Extracted from the supplied Final reference so glyph metrics match locally. */
+@font-face {
+    font-family: "Inter";
+    src: url("./fonts/inter-400-latin.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("./fonts/inter-500-latin.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("./fonts/inter-600-latin.woff2") format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("./fonts/inter-700-latin.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@theme {
+    --font-sans: "Inter", "Adwaita Sans", system-ui, sans-serif;
+}
+
+@plugin "daisyui/theme" {
+    name: "dark";
+    default: true;
+    prefersdark: true;
+    color-scheme: "dark";
+
+    --color-base-100: #242424;
+    --color-base-200: #2e2e2e;
+    --color-base-300: #383838;
+    --color-base-content: #ffffff;
+
+    --color-primary: #3584e4;
+    --color-primary-content: #ffffff;
+
+    --color-secondary: #5e5c64;
+    --color-secondary-content: #ffffff;
+
+    --color-accent: #33d17a;
+    --color-accent-content: #0b2918;
+
+    --color-neutral: #1a1a1a;
+    --color-neutral-content: #ffffff;
+
+    --color-info: #3584e4;
+    --color-info-content: #ffffff;
+    --color-success: #33d17a;
+    --color-success-content: #0b2918;
+    --color-warning: #f5c211;
+    --color-warning-content: #241f06;
+    --color-error: #e01b24;
+    --color-error-content: #ffffff;
+
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.75rem;
+
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 0;
+    --noise: 0;
+}
+
+/* Dark-only surface hierarchy: separation comes from brightness, not borders. */
+.eh-body {
+    /* Single source of truth for the sticky offsets: the header height is the
+       top edge every other sticky layer (mobile nav strip, sidebar) hangs off. */
+    --eh-header-h: 66px;
+    background: #242424;
+    color: #fff;
+    overflow-y: scroll;
+}
+
+/* ---------------------------------------------------------------- Header */
+
+.eh-header {
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    height: var(--eh-header-h);
+    background: #303030;
+}
+
+.eh-header-inner {
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(244px, auto) minmax(0, 1fr) minmax(244px, auto);
+    align-items: center;
+    gap: 16px;
+    padding: 0 28px;
+    max-width: 1600px;
+    margin-inline: auto;
+}
+
+.eh-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 244px;
+    color: #fff;
+}
+
+.eh-brand:hover {
+    opacity: 0.9;
+}
+
+.eh-brand-tile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: #3584e4;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    flex: none;
+}
+
+.eh-brand-word {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.eh-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+}
+
+.eh-brand-logo img {
+    display: block;
+    width: 167px;
+    height: 34px;
+}
+
+.eh-header-search {
+    justify-self: center;
+    width: min(644px, 100%);
+    height: 34px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 0 12px;
+    border-radius: 9px;
+    background: rgba(0, 0, 0, 0.32);
+}
+
+.eh-header-search svg {
+    width: 15px;
+    height: 15px;
+    color: rgba(255, 255, 255, 0.5);
+    flex: none;
+}
+
+.eh-header-search input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: #fff;
+    font-size: 14px;
+}
+
+.eh-header-search input::placeholder {
+    color: rgba(255, 255, 255, 0.42);
+}
+
+.eh-search-kbd {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex: none;
+}
+
+.eh-kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.eh-kbd-k {
+    width: 20px;
+    padding: 0;
+}
+
+/* Mobile header (reference): 58px bar, brand left, search collapsed to a
+   32x32 glyph button next to the GitHub tile. Tapping it expands the field
+   across the whole header row instead of squeezing it between the controls
+   (see assets/app/mobile-search.js). */
+@media (max-width: 759px) {
+    .eh-body {
+        --eh-header-h: 58px;
+    }
+
+    .eh-header-inner {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 12px;
+        padding: 0 14px;
+    }
+
+    .eh-brand {
+        min-width: 0;
+    }
+
+    .eh-header-search {
+        justify-self: end;
+        width: 32px;
+        min-width: 32px;
+        height: 32px;
+        padding: 0;
+        /* The zero-width input is still a flex sibling, so the 9px gap would
+           push the glyph off-centre by half a gap. */
+        gap: 0;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.08);
+        cursor: pointer;
+    }
+
+    /* No physical keyboard to advertise on touch. */
+    .eh-header-search .eh-search-kbd {
+        display: none;
+    }
+
+    .eh-header-search:hover {
+        background: rgba(255, 255, 255, 0.14);
+    }
+
+    .eh-header-search svg {
+        width: 16px;
+        height: 16px;
+        color: #fff;
+    }
+
+    /* Collapsed: the input keeps its DOM/a11y presence but takes no space,
+       so the pill itself is the tap target. */
+    .eh-header-search input {
+        width: 0;
+        flex: none;
+        padding: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* Anchored to the sticky header, not to the header grid: an absolutely
+       positioned grid child would be trapped inside its own middle track. */
+    .eh-header-search.is-open {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        right: 14px;
+        /* `justify-self: end` would shrink-to-fit the absolute box instead of
+           letting both insets size it. */
+        justify-self: stretch;
+        z-index: 5;
+        transform: translateY(-50%);
+        width: auto;
+        min-width: 0;
+        height: 34px;
+        padding: 0 12px;
+        gap: 9px;
+        justify-content: flex-start;
+        background: #1c1c1c;
+    }
+
+    .eh-header-search.is-open input {
+        width: auto;
+        flex: 1;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .eh-header-search.is-open svg {
+        width: 15px;
+        height: 15px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* Small viewports: drop the fixed brand track and the Ctrl K caps so the
+   search field keeps its width instead of overflowing the header. */
+@media (max-width: 639px) {
+    .eh-header-inner {
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        padding: 0 12px;
+    }
+
+    .eh-brand {
+        min-width: 0;
+    }
+
+    .eh-brand-word {
+        display: none;
+    }
+
+    .eh-search-kbd {
+        display: none;
+    }
+
+    /* Match the tighter header inset of this range. */
+    .eh-header-search.is-open {
+        left: 12px;
+        right: 12px;
+    }
+}
+
+.eh-gh-link {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.eh-gh-link:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.eh-gh-link svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* UI chrome (single-line labels and controls) sits on line-height 1 like
+   the reference; reading text keeps the document default. */
+.eh-nav-row,
+.eh-cat-row,
+.eh-source-name,
+.eh-side-label,
+.eh-side-pill,
+.eh-hero-badge,
+.eh-see-all,
+.eh-compat-trigger,
+.eh-compat-option,
+.eh-sort-pill,
+.eh-sort-option,
+.eh-install,
+.eh-load-more {
+    line-height: 1;
+}
+
+/* -------------------------------------------------------------- Layout */
+
+/* Reference geometry: 1600px content width PLUS the 28px side paddings
+   (outer 1656px), so the grid tracks grow accordingly. */
+.eh-layout {
+    box-sizing: content-box;
+    max-width: 1600px;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    align-items: start;
+    gap: 44px;
+    padding: 72px 28px 56px;
+}
+
+@media (max-width: 1023px) {
+    .eh-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+        padding: 18px 14px 48px;
+    }
+
+    /* The stacked sidebar card is replaced by the sticky chip strip; only
+       its closing "About Extension Hub" group survives, and it moves below
+       the content instead of pushing it off the first screen. */
+    .eh-content {
+        order: 1;
+    }
+
+    .eh-sidebar {
+        order: 2;
+    }
+}
+
+/* --------------------------------------------------- Mobile nav strip */
+
+/* Reference mobile navigation: one horizontally scrollable row of pills
+   under the header carrying the Explore presets, all categories and the
+   compatibility filter. Desktop keeps the sidebar and never renders it. */
+.eh-mobilenav {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .eh-mobilenav {
+        position: sticky;
+        top: var(--eh-header-h);
+        z-index: 55;
+        /* Full-bleed: cancel the layout padding so the strip touches both
+           viewport edges like the reference. */
+        margin: -18px -14px 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #2a2a2a;
+    }
+
+    /* Every chip including the compatibility pill lives in this one scroller;
+       nothing is pinned on top of it. `mask`/`filter` must stay off the track:
+       they would turn it into a containing block and trap the fixed dropdown
+       the compatibility chip opens. */
+    .eh-mobilenav-track {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        /* Horizontal swipes pan the strip, vertical ones scroll the page. */
+        touch-action: pan-x pan-y;
+    }
+
+    .eh-mobilenav-track::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.eh-chip {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 34px;
+    padding: 0 14px 0 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.eh-chip:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: #fff;
+}
+
+.eh-chip.is-active {
+    background: #fff;
+    color: #1c1c1c;
+}
+
+.eh-chip-icon {
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+.eh-chip-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.eh-chip-count {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(143, 240, 164, 0.15);
+    color: #8ff0a4;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.eh-chip.is-active .eh-chip-count {
+    background: rgba(0, 0, 0, 0.1);
+    color: #1c6f38;
+}
+
+/* Compatibility is the last chip of the scroller, so it scrolls away with
+   the rest instead of covering it. Its dropdown is therefore `fixed` and
+   placed from the trigger rect in JS: an absolute menu would be clipped by
+   the track's `overflow-x`. */
+.eh-compat--chip {
+    flex: 0 0 auto;
+}
+
+.eh-compat--chip .eh-compat-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: auto;
+    width: min(260px, calc(100vw - 28px));
+    max-height: min(340px, 60vh);
+}
+
+.eh-chip-chevron svg {
+    color: rgba(255, 255, 255, 0.6);
+    transition: transform 0.15s ease;
+}
+
+.eh-chip.is-active .eh-chip-chevron svg {
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.eh-compat--chip.is-open .eh-chip-chevron svg {
+    transform: rotate(180deg);
+}
+
+/* ------------------------------------------------------------- Sidebar */
+
+/* Rounded nav card floating on the page background, not a full-height rail. */
+.eh-sidebar {
+    background: #1f1f1f;
+    border-radius: 16px;
+    padding: 24px 16px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+}
+
+@media (min-width: 1024px) {
+.eh-sidebar {
+    position: sticky;
+    top: 138px;
+    }
+}
+
+.eh-side-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+/* Sentence-case group labels; deliberately not uppercase/tracked. */
+.eh-side-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 2px 11px 4px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+}
+
+/* The first group uses the same label-to-row rhythm as the later groups. */
+.eh-side-label--explore {
+    margin-bottom: 5px;
+}
+
+.eh-nav-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 36px;
+    padding: 0 11px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.eh-nav-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.eh-nav-row.is-active {
+    background: rgba(53, 132, 228, 0.22);
+    color: #fff;
+    font-weight: 600;
+}
+
+.eh-nav-icon {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+    flex: none;
+    color: currentColor;
+}
+
+.eh-nav-icon svg {
+    width: 15px;
+    height: 15px;
+}
+
+.eh-nav-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eh-side-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 19px;
+    padding: 0 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    flex: none;
+}
+
+/* Green tint only on the New count. */
+.eh-side-pill-new {
+    background: rgba(143, 240, 164, 0.15);
+    color: #8ff0a4;
+}
+
+.eh-side-pill-all {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* Category/source inset realigned to the 11px reference (supersedes the
+   interim 4px annotation setting; reference is the primary truth). */
+.eh-cat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 34px;
+    padding: 0 11px;
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.eh-cat-row:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.eh-cat-row.is-active {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.eh-cat-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eh-cat-count {
+    flex: none;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.38);
+}
+
+/* Compatibility panel: sidebar dropdown that gates the whole directory to
+   one GNOME Shell version. Same raised menu surface as the sort menu, but
+   full-width inside the sidebar card and inset by 4px like the reference. */
+.eh-side-group--compat {
+    gap: 6px;
+}
+
+.eh-compat {
+    position: relative;
+}
+
+/* Sidebar variant only: the reference insets trigger and menu by 4px inside
+   the card. The mobile chip variant is flush with the strip instead. */
+.eh-compat:not(.eh-compat--chip) {
+    padding: 0 4px;
+}
+
+.eh-compat-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 14px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.eh-compat-trigger:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.eh-compat-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eh-compat-trigger svg {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    color: rgba(255, 255, 255, 0.6);
+    transition: transform 0.15s ease;
+}
+
+.eh-compat.is-open .eh-compat-trigger svg {
+    transform: rotate(180deg);
+}
+
+/* Long version lists scroll instead of growing past the sidebar card. */
+.eh-compat-menu {
+    position: absolute;
+    top: 42px;
+    left: 4px;
+    right: 4px;
+    z-index: 50;
+    max-height: 280px;
+    overflow: auto;
+    padding: 6px;
+    border-radius: 10px;
+    background: #333;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.eh-compat.is-open .eh-compat-menu {
+    display: flex;
+}
+
+/* The version list can hold hundreds of entries. Inside the column flex
+   menu the default `flex-shrink: 1` beat the 32px height and squeezed every
+   row down to its 14px text box instead of letting the menu scroll, so the
+   basis is pinned and shrinking switched off explicitly. */
+.eh-compat-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    box-sizing: border-box;
+    flex: 0 0 32px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 11px;
+    border-radius: 7px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    text-align: left;
+}
+
+.eh-compat-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.eh-compat-option.is-active {
+    background: rgba(53, 132, 228, 0.18);
+    color: #fff;
+}
+
+.eh-compat-option svg {
+    width: 14px;
+    height: 14px;
+    color: #fff;
+    visibility: hidden;
+    flex: none;
+}
+
+.eh-compat-option.is-active svg {
+    visibility: visible;
+}
+
+/* Sources are informational rows (no navigation). */
+.eh-source-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: 34px;
+    padding: 0 11px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.eh-source-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.82);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eh-source-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #3584e4;
+    flex: none;
+}
+
+.eh-source-mark {
+    display: inline-flex;
+    width: 13px;
+    height: 13px;
+    flex: none;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.eh-source-mark svg {
+    width: 13px;
+    height: 13px;
+}
+
+/* Last sidebar group: the two source counters plus the quiet colophon rows
+   (repo, snapshot date, about link). Replaces the separate Sources group, the
+   former sidebar colophon and the global page footer. Keeps the shared group
+   gap/label margin, so the label-to-first-row rhythm stays 6px. */
+.eh-side-group--project {
+    font-size: 12px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.38);
+}
+
+/* Breathing room where the h34 counter rows hand over to the colophon text:
+   5px on top of the shared 1px group gap makes the handover exactly 6px. */
+.eh-source-row + .eh-side-project-link {
+    margin-top: 5px;
+}
+
+.eh-side-project-note {
+    margin: 0;
+    padding: 2px 11px;
+}
+
+.eh-side-project-link {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 11px;
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 600;
+}
+
+.eh-side-project-link:hover {
+    color: #fff;
+}
+
+.eh-side-project-mark,
+.eh-side-project-ext {
+    display: inline-flex;
+    width: 12px;
+    height: 12px;
+    flex: none;
+}
+
+.eh-side-project-mark svg,
+.eh-side-project-ext svg {
+    width: 12px;
+    height: 12px;
+}
+
+/* Below the sidebar breakpoint the chip strip carries Explore, Categories
+   and Compatibility, so the card shrinks to its closing "About Extension
+   Hub" group and trails the content as a quiet colophon. */
+@media (max-width: 1023px) {
+    .eh-sidebar {
+        gap: 20px;
+        padding: 16px 12px 18px;
+    }
+
+    .eh-side-group--explore,
+    .eh-side-group--categories,
+    .eh-side-group--compat {
+        display: none;
+    }
+}
+
+/* ------------------------------------------------------------- Content */
+
+.eh-content {
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+    min-width: 0; /* grid child: never let content stretch the 1fr track */
+}
+
+.eh-discover {
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+}
+
+/* ---------------------------------------------------------------- Hero */
+
+/* Blur-backed slider panel shared by the Trending hero and the Popular
+   slider: blurred screenshot bleed, dark scrim, framed screenshot right,
+   text column left, dots bottom-left. No prev/next arrows. */
+.eh-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    background: radial-gradient(120% 140% at 85% 20%, #2a2a2a 0%, #1b1b1b 60%);
+}
+
+/* Only the mobile layout has the swipe gesture (same range as the chip
+   strip): horizontal drags belong to the slider, vertical ones keep
+   scrolling the page. Desktop keeps the browser default. */
+@media (max-width: 1023px) {
+    .eh-hero {
+        touch-action: pan-y;
+    }
+}
+
+/* Panels capped at the reference-measured desktop sizes (434/396 at 2560):
+   content clamps inside instead of driving the height. */
+.eh-hero--trending {
+    height: 434px;
+    margin-bottom: 20px;
+}
+
+.eh-hero--popular {
+    height: 396px;
+}
+
+.eh-hero-track {
+    display: grid;
+    height: 100%;
+    grid-template-rows: 100%;
+}
+
+/* Slides share one grid cell sized by the capped panel height, so
+   crossfading never shifts the layout below. */
+.eh-hero-slide {
+    grid-area: 1 / 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+
+.eh-hero-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease;
+}
+
+.eh-hero-blur {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.eh-hero-blur img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: blur(48px);
+    transform: scale(1.3);
+    opacity: 0.6;
+}
+
+.eh-hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(90deg,
+        rgba(27, 27, 27, 0.58) 0%,
+        rgba(27, 27, 27, 0.35) 46%,
+        rgba(27, 27, 27, 0.08) 100%);
+}
+
+/* Framed screenshot bleeding into the panel's bottom-right corner. */
+.eh-hero-shot {
+    position: absolute;
+    display: block;
+    right: 40px;
+    top: 46px;
+    bottom: 0;
+    width: 50%;
+    z-index: 1;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    background-color: #151515;
+    box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.45);
+    cursor: zoom-in;
+}
+
+.eh-hero--popular .eh-hero-shot {
+    top: 42px;
+}
+
+.eh-hero-shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+}
+
+.eh-hero-body {
+    position: relative;
+    z-index: 2;
+    width: 50%;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px 44px 46px 56px;
+}
+
+.eh-hero--popular .eh-hero-body {
+    gap: 12px;
+    padding: 30px 44px 46px 56px;
+}
+
+/* Fixed budget: only the description yields (one ellipsized line); head,
+   reviews and CTA never clip. */
+.eh-hero-body > div {
+    flex: none;
+}
+
+.eh-hero-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.eh-hero-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    flex: none;
+    overflow: hidden;
+}
+
+.eh-hero-icon img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.eh-hero-icon img.eh-hero-icon-shot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(14px) saturate(2.5);
+    transform: scale(1.6);
+}
+
+.eh-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 11px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.eh-hero-badge--trending {
+    background: rgba(139, 92, 246, 0.24);
+    color: #c4b5fd;
+}
+
+.eh-hero-badge--popular {
+    align-self: flex-start;
+    height: 22px;
+    background: rgba(230, 165, 10, 0.24);
+    color: #f9d16a;
+}
+
+.eh-hero-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin: 0;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.05;
+    color: #fff;
+}
+
+.eh-hero--popular .eh-hero-title {
+    font-size: 38px;
+}
+
+/* One ellipsized line decouples live description length from the layout. */
+.eh-hero-desc {
+    margin: 0;
+    max-width: 440px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.78);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eh-hero--popular .eh-hero-desc {
+    max-width: 420px;
+    font-size: 15px;
+}
+
+.eh-hero-reviews {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eh-hero-reviews-label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.eh-hero-github-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.eh-hero-github-stars svg {
+    width: 14px;
+    height: 14px;
+}
+
+.eh-row-github-stars .eh-github-mark svg,
+.eh-hero-github-stars .eh-github-mark svg {
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.eh-row-github-stars .eh-star-mark svg,
+.eh-hero-github-stars .eh-star-mark svg {
+    color: #f5c211;
+}
+
+.eh-hero-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 22px;
+    border-radius: 10px;
+    background: #3584e4;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.eh-hero-cta:hover {
+    background: #4a90e6;
+}
+
+.eh-hero-dots {
+    position: absolute;
+    bottom: 22px;
+    left: 56px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.eh-hero-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.4);
+    transition: width 0.25s ease, background 0.25s ease;
+}
+
+.eh-hero-dot:hover {
+    background: rgba(255, 255, 255, 0.65);
+}
+
+.eh-hero-dot.is-active {
+    width: 22px;
+    background: #fff;
+}
+
+/* Mobile: drop the desktop height caps and restack the panel as the
+   reference does — screenshot as a full-width banner on top, text column
+   below it, dots in flow underneath. */
+@media (max-width: 759px) {
+    .eh-hero--trending,
+    .eh-hero--popular {
+        height: auto;
+        /* Dot row (8px) plus its bottom margin (18px). The dots sit in flow
+           below the slides, so this strip of the panel is outside every
+           slide — and the backdrop layers live inside a slide. */
+        --eh-hero-dots-band: 26px;
+    }
+
+    .eh-hero--trending {
+        margin-bottom: 4px;
+    }
+
+    .eh-hero-track {
+        height: auto;
+        grid-template-rows: auto;
+    }
+
+    /* The desktop slide clips the framed screenshot's rounded bleed. Here the
+       shot is a square in-flow banner, so nothing needs that clip — and it
+       would cut the backdrop overhang below. `.eh-hero` still enforces the
+       panel radius. */
+    .eh-hero-slide {
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Reach past the slide into the dot strip so the blurred screenshot and
+       its scrim run to the bottom edge of the whole panel instead of ending
+       in a hard step onto the fallback gradient. `.eh-hero` clips the
+       overhang, so a slider without dots simply loses the extra 26px. */
+    .eh-hero-blur,
+    .eh-hero-scrim {
+        bottom: calc(-1 * var(--eh-hero-dots-band));
+    }
+
+    /* In flow above the text instead of the floating desktop frame. */
+    .eh-hero-shot,
+    .eh-hero--popular .eh-hero-shot {
+        position: relative;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        width: 100%;
+        height: 170px;
+        flex: none;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .eh-hero-body,
+    .eh-hero--popular .eh-hero-body {
+        width: 100%;
+        flex: none;
+        gap: 12px;
+        padding: 20px 18px 22px;
+    }
+
+    .eh-hero-title,
+    .eh-hero--popular .eh-hero-title {
+        font-size: 26px;
+    }
+
+    /* Full sentence instead of the desktop one-line budget: the panel is
+       free to grow here, so nothing has to be cut. */
+    .eh-hero-desc,
+    .eh-hero--popular .eh-hero-desc {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        max-width: none;
+        font-size: 15px;
+        white-space: normal;
+    }
+
+    .eh-hero-reviews {
+        flex-wrap: wrap;
+        row-gap: 6px;
+    }
+
+    .eh-hero-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+    }
+
+    .eh-hero-icon img {
+        width: 34px;
+        height: 34px;
+    }
+
+    .eh-hero-dots {
+        position: static;
+        margin: 0 0 18px 18px;
+    }
+}
+
+@media (min-width: 760px) and (max-width: 1023px) {
+    .eh-hero-title {
+        font-size: 34px;
+    }
+
+    .eh-hero--popular .eh-hero-title {
+        font-size: 32px;
+    }
+}
+
+/* ------------------------------------------------------- Discover sections */
+
+.eh-sec {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Popular section (header + slider) carries the reference's extra 20px
+   top offset on top of the 64px discover block gap. */
+.eh-sec-popular {
+    margin-top: 40px;
+}
+
+/* Vertical rhythm: block gaps come from .eh-discover's 64px; the hero's
+   margin-bottom 20 and the section heads' margin-top 16 add the reference
+   offsets on top. */
+.eh-sec-head {
+    margin-top: 16px;
+    padding: 0 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.eh-sec-titles {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.eh-sec-title {
+    margin: 0;
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+}
+
+.eh-sec-note {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.3;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.eh-see-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: #78aeed;
+}
+
+.eh-see-all:hover {
+    color: #99c1f1;
+}
+
+.eh-see-all svg {
+    width: 14px;
+    height: 14px;
+}
+
+.eh-sec-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Mobile rhythm from the reference: tighter block gaps, 22px section
+   titles and the section inset reduced to the row padding. */
+@media (max-width: 759px) {
+    .eh-content {
+        gap: 24px;
+    }
+
+    .eh-discover {
+        gap: 40px;
+    }
+
+    .eh-sec-popular {
+        margin-top: 20px;
+    }
+
+    .eh-sec-head {
+        padding: 0 4px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .eh-sec-title {
+        font-size: 22px;
+    }
+}
+
+.eh-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 1023px) {
+    .eh-cat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 479px) {
+    .eh-cat-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.eh-cat-tile {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px;
+    border-radius: 12px;
+    background: #2b2b2b;
+    text-align: left;
+    min-width: 0;
+}
+
+.eh-cat-tile:hover {
+    background: #303030;
+}
+
+.eh-cat-tile-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(53, 132, 228, 0.16);
+    color: #99c1f1;
+    flex: none;
+}
+
+.eh-cat-tile-icon svg {
+    width: 19px;
+    height: 19px;
+}
+
+.eh-cat-tile-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.eh-cat-tile-label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eh-cat-tile-count {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* ---------------------------------------------------------- List header */
+
+/* Wraps header, rows and load-more; tighter rhythm than the 34px content
+   gap that only structures the discover blocks. */
+.eh-list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.eh-list-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 0 14px;
+}
+
+.eh-list-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.eh-list-title {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+}
+
+.eh-list-note {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.eh-sort {
+    position: relative;
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
+
+.eh-sort-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 13px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.eh-sort-pill:hover {
+    background: rgba(255, 255, 255, 0.13);
+    color: #fff;
+}
+
+.eh-sort-pill svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.15s ease;
+}
+
+.eh-sort.is-open .eh-sort-pill svg {
+    transform: rotate(180deg);
+}
+
+.eh-sort-menu {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    z-index: 40;
+    width: 210px;
+    padding: 6px;
+    border-radius: 10px;
+    background: #333;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+    display: none;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.eh-sort.is-open .eh-sort-menu {
+    display: flex;
+}
+
+/* Same shrink guard as the compatibility options: the row height is a hard
+   floor, never a starting point the flex column may compress. */
+.eh-sort-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    flex: 0 0 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 11px;
+    border-radius: 7px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.82);
+    text-align: left;
+}
+
+.eh-sort-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.eh-sort-option.is-active {
+    background: rgba(53, 132, 228, 0.18);
+    color: #fff;
+}
+
+.eh-sort-option svg {
+    width: 14px;
+    height: 14px;
+    color: #fff;
+    visibility: hidden;
+    flex: none;
+}
+
+.eh-sort-option.is-active svg {
+    visibility: visible;
+}
+
+/* Mobile: title, note and sort pill stack; the pill then sits left, so its
+   menu has to open to the right instead of hanging off the screen edge. */
+@media (max-width: 759px) {
+    .eh-list-header {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 0 4px;
+    }
+
+    .eh-list-heading {
+        flex: 1 1 100%;
+        gap: 4px;
+    }
+
+    .eh-list-note {
+        font-size: 14px;
+    }
+
+    .eh-sort {
+        margin-top: 0;
+    }
+
+    .eh-sort-menu {
+        left: 0;
+        right: auto;
+        width: min(240px, calc(100vw - 40px));
+    }
+}
+
+/* --------------------------------------------------------------- Rows */
+
+.eh-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 200px;
+}
+
+.eh-row {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 10px;
+    column-gap: 20px;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.eh-row:hover {
+    background: rgba(255, 255, 255, 0.05);
+    z-index: 20;
+}
+
+.eh-row:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Stretched above the row icon and text (both z-index 2) so that clicking
+   name, description or icon activates this real anchor. Metrics deliberately
+   stay above it (z-index 4) to keep the row action clickable. */
+.eh-row-link {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: 10px;
+}
+
+.eh-row-icon {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.06);
+    flex: none;
+}
+
+.eh-row-icon img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+}
+
+.eh-row-icon-letter {
+    background-color: #613583; /* overwritten by the per-pk inline style */
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+}
+
+/* Screenshot backdrop for icon-less rows: fully covered, heavily blurred.
+   Blur averages colors into grey, so oversaturate to compensate; the dim
+   stays light to preserve the color. The img is absolute so the letter
+   stays the only flex child and remains centered. */
+.eh-row-icon-shot {
+    overflow: hidden;
+}
+
+.eh-row-icon-shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(14px) saturate(2.5);
+    transform: scale(1.6);
+}
+
+.eh-row-icon-shot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.eh-row-icon-shot-letter {
+    position: relative;
+    z-index: 1;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+}
+
+.eh-row-text {
+    position: relative;
+    z-index: 2;
+    flex: 1 1 260px;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.eh-row-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: #fff;
+    min-width: 0;
+}
+
+.eh-row-name-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.eh-row .eh-seal {
+    display: inline-flex;
+    width: 16px;
+    height: 16px;
+    flex: none;
+}
+
+.eh-row .eh-seal svg {
+    width: 100%;
+    height: 100%;
+}
+
+.eh-row-github-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    flex: none;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.eh-row-github-stars svg {
+    width: 13px;
+    height: 13px;
+    color: #f5c211;
+}
+
+.eh-row-desc {
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Stacking context must stay above .eh-row-link so the row action can paint
+   on top of it, but stays click-transparent: only the action itself takes
+   pointer events, everything else falls through to the stretched link. */
+.eh-row-metrics {
+    position: relative;
+    z-index: 4;
+    pointer-events: none;
+    margin-left: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    column-gap: 22px;
+}
+
+.eh-rating-slot {
+    flex: 0 0 150px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    min-width: 0;
+}
+
+.eh-stars {
+    position: relative;
+    width: 78px;
+    height: 14px;
+    display: inline-block;
+    flex: none;
+}
+
+.eh-stars--hero {
+    width: 95px;
+    height: 17px;
+}
+
+.eh-stars--hero-pop,
+.eh-stars--detail {
+    width: 90px;
+    height: 16px;
+}
+
+.eh-stars-dim,
+.eh-stars-fill {
+    position: absolute;
+    inset: 0;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z'/%3E%3C/svg%3E");
+    -webkit-mask-size: 15.6px 14px;
+    mask-size: 15.6px 14px;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+}
+
+.eh-stars--hero .eh-stars-dim,
+.eh-stars--hero .eh-stars-fill {
+    -webkit-mask-size: 19px 17px;
+    mask-size: 19px 17px;
+}
+
+.eh-stars--hero-pop .eh-stars-dim,
+.eh-stars--hero-pop .eh-stars-fill,
+.eh-stars--detail .eh-stars-dim,
+.eh-stars--detail .eh-stars-fill {
+    -webkit-mask-size: 18px 16px;
+    mask-size: 18px 16px;
+}
+
+.eh-stars-dim {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.eh-stars-fill {
+    background-color: #f5c211;
+}
+
+.eh-rating-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.eh-rating-comments {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.4);
+    white-space: nowrap;
+}
+
+.eh-rating-none {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.35);
+    white-space: nowrap;
+}
+
+.eh-action-slot {
+    flex: 0 0 100px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.eh-row-metrics [data-row-action] {
+    pointer-events: auto;
+}
+
+.eh-install {
+    position: relative;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 18px;
+    border-radius: 9px;
+    background: #2c4f80;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.eh-install:hover {
+    background: #38619c;
+}
+
+.eh-install-icon {
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+}
+
+.eh-install-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Mobile row: 44px tile, name/description on the first line, rating and
+   action wrapping underneath (indented to the text column) instead of
+   fighting the text for the same 334px. */
+@media (max-width: 759px) {
+    .eh-row {
+        column-gap: 14px;
+        row-gap: 8px;
+        padding: 12px 10px;
+    }
+
+    .eh-row-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 11px;
+    }
+
+    .eh-row-icon img {
+        width: 38px;
+        height: 38px;
+    }
+
+    .eh-row-icon-letter,
+    .eh-row-icon-shot-letter {
+        font-size: 21px;
+    }
+
+    .eh-row-text {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .eh-row-metrics {
+        flex: 1 1 100%;
+        margin-left: 0;
+        padding-left: 58px;
+        justify-content: flex-start;
+        column-gap: 12px;
+    }
+
+    .eh-rating-slot {
+        flex: 0 1 auto;
+        justify-content: flex-start;
+    }
+
+    /* Rows are pure navigation on mobile: the whole row opens the detail
+       page, where the primary action lives as a full-width CTA. A second
+       tap target of its own inside the row is a mis-tap waiting to happen.
+       Hero CTA and detail CTA are unaffected. */
+    .eh-action-slot {
+        display: none;
+    }
+
+    /* The rating is now the only thing that line can carry — without it,
+       do not reserve its height. */
+    .eh-row-metrics:not(:has(.eh-stars, .eh-rating-none)) {
+        display: none;
+    }
+}
+
+/* ------------------------------------------------------------ Popover */
+
+.eh-popover {
+    position: absolute;
+    right: 10px;
+    top: 58px;
+    z-index: 30;
+    width: 440px;
+    max-width: calc(100vw - 32px);
+    padding: 10px;
+    border-radius: 12px;
+    background: #333;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.65);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+.eh-row:hover .eh-popover,
+.eh-row:focus-within .eh-popover {
+    opacity: 1;
+}
+
+.eh-popover-shot {
+    display: block;
+    width: 100%;
+    height: 230px;
+    border-radius: 8px;
+    background: #161616;
+    object-fit: contain;
+}
+
+.eh-popover-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 4px 2px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.eh-popover-meta span:last-child {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* The popover is a pure hover affordance. On touch there is no hover to
+   leave again, and :focus-within fires on tap, so it would flash a 440px
+   panel over the list. Drop it wherever real hovering is unavailable or
+   the viewport is too narrow to hold it. */
+@media (hover: none), (pointer: coarse), (max-width: 1023px) {
+    .eh-popover {
+        display: none;
+    }
+}
+
+/* ---------------------------------------------------------- Load more */
+
+.eh-load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.eh-load-more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.eh-load-more:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+/* Every interactive gh control signals clickability with the pointer. */
+.eh-nav-row,
+.eh-cat-row,
+.eh-compat-trigger,
+.eh-compat-option,
+.eh-sort-pill,
+.eh-sort-option,
+.eh-cat-tile,
+.eh-load-more,
+.eh-hero-cta,
+.eh-hero-dot,
+.eh-see-all {
+    cursor: pointer;
+}
+
+/* ------------------------------------------------------------- Detail */
+
+/* Same content box as the list layout, but single-column: the detail head
+   and the screenshot hero span the full width, only the content area below
+   splits into text column + facts sidebar. */
+.eh-detail {
+    box-sizing: content-box;
+    max-width: 1600px;
+    margin-inline: auto;
+    padding: 32px 28px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+@media (max-width: 1023px) {
+    .eh-detail {
+        gap: 24px;
+        padding: 20px 16px 40px;
+    }
+}
+
+.eh-detail-back {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 15px 0 11px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.eh-detail-back:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+.eh-detail-back svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+}
+
+/* --------------------------------------------------------- Detail head */
+
+.eh-detail-head {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 22px;
+    padding: 0 2px;
+}
+
+.eh-detail-icon {
+    position: relative;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.eh-detail-icon img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.eh-detail-icon-letter {
+    font-size: 38px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+}
+
+/* Icon-less items reuse the row fallback: blurred screenshot backdrop with
+   the initial on top (blur greys colors out, so oversaturate). */
+.eh-detail-icon-shot img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(18px) saturate(2.5);
+    transform: scale(1.6);
+}
+
+.eh-detail-icon-shot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.eh-detail-icon-shot .eh-detail-icon-letter {
+    position: relative;
+    z-index: 1;
+}
+
+.eh-detail-headtext {
+    flex: 1 1 340px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.eh-detail-title {
+    margin: 0;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+.eh-detail-byline {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.eh-detail-byline a {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.eh-detail-byline a:hover {
+    color: #fff;
+}
+
+.eh-detail-sep {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.eh-detail-metrics {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+/* EGO downloads and GitHub stars are separate source metrics; each pill
+   carries its own optional green week delta. */
+.eh-detail-metric {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.eh-detail-metric-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    align-self: center;
+    color: #8a8a8a;
+}
+
+.eh-detail-metric-icons svg {
+    width: 14px;
+    height: 14px;
+}
+
+.eh-detail-star {
+    display: inline-flex;
+    color: #f5c211;
+}
+
+.eh-detail-delta {
+    font-size: 13px;
+    font-weight: 500;
+    color: #8ff0a4;
+}
+
+.eh-detail-rating {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.eh-detail-rating-label {
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.eh-detail-actions {
+    flex: none;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.eh-detail-install {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 10px;
+    background: #3584e4;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.eh-detail-install:hover {
+    background: #4a90e6;
+}
+
+.eh-detail-install svg {
+    width: 16px;
+    height: 16px;
+    flex: none;
+}
+
+/* ---------------------------------------------------- Screenshot hero */
+
+/* Blurred, scaled screenshot bleeds behind a contained copy of itself; the
+   wrapper stays the lightbox anchor. */
+.eh-detail-shot {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin: 20px 0 18px;
+    padding: 28px;
+    border-radius: 14px;
+    background-color: #1b1b1b;
+    cursor: zoom-in;
+}
+
+.eh-detail-shot-blur {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(44px);
+    transform: scale(1.25);
+    opacity: 0.35;
+}
+
+.eh-detail-shot-img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 420px;
+    border-radius: 6px;
+    object-fit: contain;
+}
+
+@media (max-width: 759px) {
+    .eh-detail-head {
+        gap: 14px;
+        padding: 0;
+    }
+
+    .eh-detail-icon {
+        width: 72px;
+        height: 72px;
+        border-radius: 18px;
+    }
+
+    .eh-detail-icon img {
+        width: 56px;
+        height: 56px;
+    }
+
+    .eh-detail-headtext {
+        flex: 1 1 100%;
+        min-width: 0;
+        gap: 10px;
+    }
+
+    .eh-detail-title {
+        font-size: 26px;
+    }
+
+    /* The primary action becomes the full-width CTA of the head block
+       instead of a pill squeezed against the right edge. */
+    .eh-detail-actions {
+        flex: 1 1 100%;
+        margin-left: 0;
+    }
+
+    .eh-detail-install {
+        width: 100%;
+    }
+
+    .eh-detail-metrics {
+        gap: 8px 16px;
+    }
+
+    .eh-detail-shot {
+        margin: 4px 0;
+        padding: 14px;
+    }
+
+    .eh-detail-shot-img {
+        height: 220px;
+    }
+}
+
+/* ------------------------------------------------------- Detail body */
+
+/* Desktop: text column + 320px facts sidebar. Below 1024px the grid
+   collapses, so the sidebar follows About, Reviews and "More by" in
+   document order without any reordering. */
+.eh-detail-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+    gap: 44px;
+}
+
+@media (max-width: 1023px) {
+    .eh-detail-body {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+    }
+}
+
+.eh-detail-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 42px;
+}
+
+.eh-detail-h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+}
+
+.eh-detail-about {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* The snapshot description is shown in full; `pre-line` keeps the source
+   line breaks EGO ships. */
+.eh-detail-desc {
+    max-width: 720px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.74);
+    white-space: pre-line;
+    text-wrap: pretty;
+}
+
+.eh-detail-more {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Rows are inset by their own 14px padding; pulling the list left keeps the
+   row text flush with the headings above. */
+.eh-detail-more-list {
+    margin-left: -14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+@media (max-width: 1023px) {
+    .eh-detail-more-list {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 759px) {
+    .eh-detail-main {
+        gap: 32px;
+    }
+
+    .eh-detail-desc {
+        font-size: 14px;
+    }
+
+    /* Rows already carry a negative-margin-free inset here; pull the list
+       back in line with the headings. */
+    .eh-detail-more-list {
+        margin-left: -10px;
+    }
+}
+
+/* ---------------------------------------------------------- Reviews */
+
+.eh-detail-reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.eh-detail-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.eh-review {
+    display: flex;
+    gap: 14px;
+    padding: 16px 14px 16px 0;
+}
+
+/* Reviews past the first five are rendered but hidden; the reveal button
+   only flips this class, never fetches again. */
+.eh-review.is-hidden {
+    display: none;
+}
+
+.eh-review-avatar {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+}
+
+.eh-review-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.eh-review-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 7px;
+}
+
+.eh-review-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.eh-review-author {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+    color: #fff;
+}
+
+.eh-review-date {
+    font-size: 12px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.eh-review-dev {
+    display: inline-flex;
+    align-items: center;
+    height: 19px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: rgba(53, 132, 228, 0.22);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    color: #99c1f1;
+}
+
+.eh-review-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.72);
+    text-wrap: pretty;
+}
+
+.eh-review-text p {
+    margin: 0 0 8px;
+}
+
+.eh-review-text p:last-child {
+    margin-bottom: 0;
+}
+
+.eh-review-text a {
+    color: #78aeed;
+}
+
+.eh-review-text ul,
+.eh-review-text ol {
+    margin: 0 0 8px;
+    padding-left: 20px;
+    list-style: revert;
+}
+
+.eh-review-text pre,
+.eh-review-text code {
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+}
+
+.eh-review-more {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.eh-review-more:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+.eh-review-more svg {
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+.eh-review-empty {
+    margin: 0;
+    padding: 26px 24px;
+    border-radius: 14px;
+    background: #2b2b2b;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ----------------------------------------------------- Facts sidebar */
+
+.eh-facts {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 14px;
+    background: #1f1f1f;
+}
+
+@media (min-width: 1024px) {
+.eh-facts {
+    position: sticky;
+    top: 94px;
+    }
+}
+
+.eh-fact {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.eh-fact-label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.42);
+}
+
+.eh-fact-value {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.88);
+    word-break: break-word;
+}
+
+.eh-fact-value a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #78aeed;
+}
+
+.eh-fact-value a:hover {
+    color: #99c1f1;
+}
+
+.eh-fact-value a svg {
+    width: 12px;
+    height: 12px;
+    flex: none;
+}
+
+.eh-fact-expand {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.eh-fact-expand:hover {
+    color: #fff;
+}
+
+.eh-fact-icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.eh-fact-icons svg {
+    width: 14px;
+    height: 14px;
+}
+
+.eh-fact-icons svg:last-child {
+    color: #f5c211;
+}
+
+.eh-fact-extra {
+    font-size: 13px;
+    font-weight: 500;
+    color: #8ff0a4;
+}
+
+.eh-fact-code {
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.eh-facts-links {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.eh-facts-links-label {
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.42);
+}
+
+.eh-facts-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #78aeed;
+    word-break: break-word;
+}
+
+.eh-facts-link:hover {
+    color: #99c1f1;
+}
+
+.eh-facts-link svg {
+    width: 14px;
+    height: 14px;
+    flex: none;
+}
+
+/* Reviews carry sanitised user HTML: long URLs and code must break instead
+   of widening the page on a 390px screen. */
+@media (max-width: 759px) {
+    .eh-review {
+        gap: 12px;
+        padding: 14px 0;
+    }
+
+    .eh-review-text {
+        overflow-wrap: anywhere;
+    }
+
+    .eh-review-text pre {
+        overflow-x: auto;
+    }
+
+    .eh-facts {
+        padding: 18px 16px;
+    }
+}
+
+/* ------------------------------------------------------------ Empty */
+
+.eh-empty {
+    padding: 60px 16px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* --------------------------------------- Classes shared with other views */
+
+.eh-panel {
+    @apply rounded-2xl bg-base-200/80;
+}
+
+.eh-card {
+    @apply rounded-2xl bg-base-200/80;
+}
+
+.eh-card:hover {
+    background-color: color-mix(in oklab, var(--color-base-200) 85%, white 4%);
+}
+
+.eh-muted {
+    color: rgba(255, 255, 255, 0.62);
+}
+
+.eh-subtle {
+    color: rgba(255, 255, 255, 0.46);
+}
+
+.eh-title {
+    letter-spacing: -0.01em;
+}
+
+.eh-meta {
+    @apply inline-flex items-center gap-1.5 text-sm;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.btn-primary {
+    box-shadow: 0 5px 16px rgba(53, 132, 228, 0.28);
+}
+
+.btn {
+    @apply font-medium;
+}
+
+.btn:focus-visible,
+select:focus-visible,
+input:focus-visible,
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible {
+    outline: 2px solid rgba(53, 132, 228, 0.9);
+    outline-offset: 2px;
+}

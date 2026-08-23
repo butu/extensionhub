@@ -1,0 +1,224 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "count", "pageSize", "items"],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 2,
+      "description": "Schema version for compatibility tracking. v2 is a clean break from v1: extensions are identified by GNOME uuid only, there is no numeric pk/slug/gnomeUrl/global installUrl, and source-specific data (EGO and/or GitHub) lives in `sources`."
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp when the snapshot was generated"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of extension items in the snapshot"
+    },
+    "pageSize": {
+      "type": "integer",
+      "const": 20,
+      "description": "Fixed page size for client-side pagination"
+    },
+    "items": {
+      "type": "array",
+      "description": "Array of extension items. Each item's public identity is its GNOME uuid; there is no numeric pk or slug.",
+      "items": {
+        "type": "object",
+        "required": [
+          "uuid",
+          "path",
+          "name",
+          "description",
+          "creator",
+          "creatorUrl",
+          "supportedShellVersions",
+          "createdAt",
+          "updatedAt",
+          "recentSortValue",
+          "score",
+          "scoreComponents",
+          "sources",
+          "hasScreenshot",
+          "trendScore"
+        ],
+        "properties": {
+          "pk": false,
+          "slug": false,
+          "gnomeUrl": false,
+          "installUrl": false,
+          "downloads": false,
+          "uuid": {
+            "type": "string",
+            "description": "The extension's only public identity: the GNOME shell-extension uuid (e.g. name@author)."
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/extension/",
+            "description": "URL path composed exclusively from the URL-encoded uuid: /extension/{urlencoded uuid}"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the extension"
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description or empty string if not provided"
+          },
+          "creator": {
+            "type": "string",
+            "description": "Creator name or 'Unknown' if not provided"
+          },
+          "creatorUrl": {
+            "type": ["string", "null"],
+            "description": "Optional URL to creator's profile or website"
+          },
+          "supportedShellVersions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Canonical union of every source's validated GNOME Shell versions"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO-8601 creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO-8601 timestamp of the most recent activity across all of this extension's sources"
+          },
+          "recentSortValue": {
+            "type": "integer",
+            "description": "Unix timestamp mirroring updatedAt, for sorting by recency"
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Source-neutral ranking score (0-100), combining scoreComponents with centrally configured weights (popularity 60%, freshness 40% by default). Not a visitor rating; never compares raw EGO and GitHub values directly."
+          },
+          "scoreComponents": {
+            "type": "object",
+            "required": ["popularity", "freshness"],
+            "additionalProperties": false,
+            "properties": {
+              "popularity": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Best (max, never summed) source-internal percentile rank across this extension's sources' popularity signals"
+              },
+              "freshness": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Best (max, never summed) source-internal percentile rank across this extension's sources' freshness signals"
+              }
+            }
+          },
+          "sources": {
+            "type": "array",
+            "minItems": 1,
+            "description": "At least one entry: the EGO and/or GitHub source(s) this extension was discovered from. Source-specific links and metrics live exclusively here, never at the item's top level.",
+            "items": {
+              "type": "object",
+              "required": [
+                "sourceType",
+                "externalIdentifier",
+                "displayName",
+                "displayDescription",
+                "displayIcon",
+                "displayScreenshot",
+                "supportedShellVersions",
+                "lastCommitAt",
+                "lastReleaseAt",
+                "links",
+                "metrics"
+              ],
+              "properties": {
+                "sourceType": {
+                  "type": "string",
+                  "enum": ["ego", "github"]
+                },
+                "externalIdentifier": {
+                  "type": "string",
+                  "description": "The source's own identifier: the EGO pk (as a string) or the GitHub repository id (as a string)"
+                },
+                "displayName": {
+                  "type": ["string", "null"]
+                },
+                "displayDescription": {
+                  "type": ["string", "null"]
+                },
+                "displayIcon": {
+                  "type": ["string", "null"]
+                },
+                "displayScreenshot": {
+                  "type": ["string", "null"]
+                },
+                "supportedShellVersions": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "This source's own validated GNOME Shell versions, before being merged into the item's canonical union"
+                },
+                "lastCommitAt": {
+                  "type": ["string", "null"],
+                  "format": "date-time",
+                  "description": "GitHub only: ISO-8601 timestamp of the last commit"
+                },
+                "lastReleaseAt": {
+                  "type": ["string", "null"],
+                  "format": "date-time",
+                  "description": "ISO-8601 timestamp of the last release (EGO: derived from the extension's last change)"
+                },
+                "links": {
+                  "type": "object",
+                  "description": "Source-specific links only. EGO: pageUrl (EGO detail page) + installUrl (gnome-extensions:// install target). GitHub: repositoryUrl + optional releaseUrl (release zip). There is no cross-source installUrl.",
+                  "properties": {
+                    "pageUrl": { "type": "string" },
+                    "installUrl": { "type": "string" },
+                    "repositoryUrl": { "type": "string" },
+                    "releaseUrl": { "type": "string" }
+                  },
+                  "additionalProperties": false
+                },
+                "metrics": {
+                  "type": "object",
+                  "description": "Only the metrics this source actually measured. A missing GitHub downloads/rating/comments value (or a missing EGO stars/forks value) is omitted entirely here, never serialized as 0 or null. The `*Delta*` trend fields are likewise omitted per window until that window's 7/1/30-day baseline exists; EGO only ever reports `downloadsDelta*`, GitHub only ever reports `starsDelta*`. Deltas may be negative (a real decrease), unlike their base counters.",
+                  "properties": {
+                    "downloads": { "type": "integer", "minimum": 0 },
+                    "rating": { "type": "number", "minimum": 0 },
+                    "comments": { "type": "integer", "minimum": 0 },
+                    "stars": { "type": "integer", "minimum": 0 },
+                    "forks": { "type": "integer", "minimum": 0 },
+                    "downloadsDelta1d": { "type": "integer", "description": "EGO only: downloads change over the last 1 day" },
+                    "downloadsDelta7d": { "type": "integer", "description": "EGO only: downloads change over the last 7 days; feeds trendScore" },
+                    "downloadsDelta30d": { "type": "integer", "description": "EGO only: downloads change over the last 30 days" },
+                    "starsDelta1d": { "type": "integer", "description": "GitHub only: stars change over the last 1 day" },
+                    "starsDelta7d": { "type": "integer", "description": "GitHub only: stars change over the last 7 days; feeds trendScore" },
+                    "starsDelta30d": { "type": "integer", "description": "GitHub only: stars change over the last 30 days" }
+                  },
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "hasScreenshot": {
+            "type": "boolean",
+            "description": "Whether any source has a screenshot available"
+          },
+          "trendScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Source-neutral 7-day trend rank (0-100). 0 means not trend-eligible: no source has both a 7-day baseline and a delta meeting its source type's minimum (EGO downloads >= 5, GitHub stars >= 1). Never compares raw EGO and GitHub deltas directly; a dual-source extension takes the best (max) normalized trend value across its sources."
+          }
+        }
+      }
+    }
+  }
+}

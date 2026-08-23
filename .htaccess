@@ -1,0 +1,23 @@
+DirectoryIndex public/index.php
+
+<IfModule mod_env.c>
+    SetEnv APP_ENV prod
+    SetEnv APP_DEBUG 0
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If requested file exists inside /public, serve it directly.
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f
+    RewriteRule ^(.*)$ /public/$1 [L]
+
+    # Otherwise route all requests to Symfony front controller in /public.
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^ /public/index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_dir.c>
+    FallbackResource /public/index.php
+</IfModule>

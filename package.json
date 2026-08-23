@@ -1,0 +1,21 @@
+{
+    "name": "extensionhub",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "watch": "vite build --watch",
+        "test": "node --test tests/frontend/**/*.test.js"
+    },
+    "devDependencies": {
+        "vite": "^6.0",
+        "vite-plugin-symfony": "^8.1"
+    },
+    "dependencies": {
+        "@tailwindcss/vite": "^4.1.7",
+        "daisyui": "^5.0.37",
+        "glightbox": "^3.3.1",
+        "tailwindcss": "^4.1.7"
+    }
+}

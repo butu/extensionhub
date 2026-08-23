@@ -1,0 +1,30 @@
+{
+  "assets/app.js": {
+    "file": "assets/app-D7MAyFrV.js",
+    "name": "app",
+    "src": "assets/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-DVqdK8Cg.css"
+    ],
+    "assets": [
+      "assets/inter-400-latin-Dx4kXJAl.woff2"
+    ]
+  },
+  "assets/fonts/inter-400-latin.woff2": {
+    "file": "assets/inter-400-latin-Dx4kXJAl.woff2",
+    "src": "assets/fonts/inter-400-latin.woff2"
+  },
+  "assets/fonts/inter-500-latin.woff2": {
+    "file": "assets/inter-400-latin-Dx4kXJAl.woff2",
+    "src": "assets/fonts/inter-400-latin.woff2"
+  },
+  "assets/fonts/inter-600-latin.woff2": {
+    "file": "assets/inter-400-latin-Dx4kXJAl.woff2",
+    "src": "assets/fonts/inter-400-latin.woff2"
+  },
+  "assets/fonts/inter-700-latin.woff2": {
+    "file": "assets/inter-400-latin-Dx4kXJAl.woff2",
+    "src": "assets/fonts/inter-400-latin.woff2"
+  }
+}

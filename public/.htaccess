@@ -1,0 +1,32 @@
+DirectoryIndex index.php
+
+<IfModule mod_env.c>
+    SetEnv APP_ENV prod
+    SetEnv APP_DEBUG 0
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Keep Authorization header when running behind Apache.
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect everything to front controller except existing files.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_dir.c>
+    FallbackResource /index.php
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "^(extensions(\.v2)?|comments)\.json$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+</IfModule>

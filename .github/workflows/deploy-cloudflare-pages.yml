@@ -1,0 +1,130 @@
+name: Deploy Cloudflare Pages
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    # 03:17 UTC daily — after the server-side cron (app:update-extensions,
+    # app:parse-comments, app:build-extension-snapshot) has finished.
+    - cron: '17 3 * * *'
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-pages-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout committed dist/
+        uses: actions/checkout@v4
+
+      - name: Validate SNAPSHOT_BASE_URL and CLOUDFLARE_PAGES_PROJECT repository variables
+        env:
+          SNAPSHOT_BASE_URL: ${{ vars.SNAPSHOT_BASE_URL }}
+          CLOUDFLARE_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SNAPSHOT_BASE_URL}" ]; then
+            echo "::error::Repository variable SNAPSHOT_BASE_URL is empty or not set. Configure it without a trailing slash, e.g. https://origin.example.com/data" >&2
+            exit 1
+          fi
+          if [[ "${SNAPSHOT_BASE_URL}" == */ ]]; then
+            echo "::error::SNAPSHOT_BASE_URL must not have a trailing slash: ${SNAPSHOT_BASE_URL}" >&2
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_PAGES_PROJECT}" ]; then
+            echo "::error::Repository variable CLOUDFLARE_PAGES_PROJECT is empty or not set. Configure it with the Cloudflare Pages project name." >&2
+            exit 1
+          fi
+          if ! [[ "${CLOUDFLARE_PAGES_PROJECT}" =~ ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$ ]]; then
+            echo "::error::Repository variable CLOUDFLARE_PAGES_PROJECT '${CLOUDFLARE_PAGES_PROJECT}' has an invalid format. Only lowercase letters, digits, and hyphens are allowed, and it must start and end with a letter or digit." >&2
+            exit 1
+          fi
+
+      - name: Verify committed dist/ prerequisites
+        run: |
+          set -euo pipefail
+          missing=0
+          for path in dist/index.html dist/404.html dist/_redirects dist/_headers dist/build; do
+            if [ ! -e "${path}" ]; then
+              echo "::error::Missing required committed path: ${path}. Build and commit dist/ locally first with 'ddev exec php bin/console app:build-static-site'." >&2
+              missing=1
+            fi
+          done
+          if [ "${missing}" -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Download nightly snapshot JSON files
+        env:
+          SNAPSHOT_BASE_URL: ${{ vars.SNAPSHOT_BASE_URL }}
+        run: |
+          set -euo pipefail
+          tmp_dir="$(mktemp -d)"
+          echo "SNAPSHOT_TMP_DIR=${tmp_dir}" >> "$GITHUB_ENV"
+          for file in extensions.json extensions.v2.json comments.json; do
+            curl --fail --location --retry 3 --retry-delay 2 --silent --show-error \
+              --output "${tmp_dir}/${file}" \
+              "${SNAPSHOT_BASE_URL}/${file}"
+          done
+
+      - name: Validate downloaded snapshot JSON files
+        run: |
+          set -euo pipefail
+          for file in extensions.json extensions.v2.json comments.json; do
+            python3 -c "import json,sys; json.load(open(sys.argv[1]))" "${SNAPSHOT_TMP_DIR}/${file}"
+          done
+          # extensions.v2.json is a stable-URL alias of extensions.json; both
+          # must be byte-identical or versioned/unversioned consumers diverge.
+          if ! cmp -s "${SNAPSHOT_TMP_DIR}/extensions.json" "${SNAPSHOT_TMP_DIR}/extensions.v2.json"; then
+            echo "::error::Downloaded extensions.json and extensions.v2.json are not byte-identical; refusing to deploy." >&2
+            exit 1
+          fi
+
+      - name: Replace dist/data with the validated snapshot
+        run: |
+          set -euo pipefail
+          mkdir -p dist/data
+          for file in extensions.json extensions.v2.json comments.json; do
+            cp "${SNAPSHOT_TMP_DIR}/${file}" "dist/data/${file}"
+          done
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Regenerate sitemap.xml from the replaced snapshot
+        run: php bin/generate-sitemap.php dist/data/extensions.json dist/sitemap.xml
+
+      - name: Enforce Cloudflare Pages limits on dist/
+        run: |
+          set -euo pipefail
+          max_files=20000
+          max_bytes=$((25 * 1024 * 1024))
+          file_count=0
+          while IFS= read -r -d '' file; do
+            file_count=$((file_count + 1))
+            size=$(stat -c%s "${file}")
+            if [ "${size}" -gt "${max_bytes}" ]; then
+              echo "::error::File ${file} (${size} bytes) exceeds the maximum allowed size of ${max_bytes} bytes" >&2
+              exit 1
+            fi
+          done < <(find dist -type f -print0)
+          if [ "${file_count}" -gt "${max_files}" ]; then
+            echo "::error::dist/ contains ${file_count} files, exceeding the maximum allowed count of ${max_files}" >&2
+            exit 1
+          fi
+
+      - name: Deploy dist/ to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=${{ vars.CLOUDFLARE_PAGES_PROJECT }}
