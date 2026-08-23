@@ -5,6 +5,8 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/butu/extensionhub" alt="License"></a>
   <a href="https://symfony.com/"><img src="https://img.shields.io/badge/Symfony-7.4-000000?logo=symfony" alt="Symfony"></a>
   <a href="https://extensions.gnome.org/"><img src="https://img.shields.io/badge/GNOME-Shell_extensions-4a86cf?logo=gnome&amp;logoColor=white" alt="GNOME Shell"></a>
+  <br><br>
+  <a href="https://extension-hub.pages.dev/"><img src="docs/assets/screenshot-discover.png" alt="The Extension Hub discover page, showing a featured extension and the trending list" width="900"></a>
 </div>
 
 ## 📋 Features
