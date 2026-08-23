@@ -1,10 +1,10 @@
 <div align="center">
   <h1>Extension Hub</h1>
   <p>A source-neutral directory and open data feed for GNOME Shell extensions.</p>
-  [![Live site](https://img.shields.io/badge/website-extensionhub.pages.dev-3584e4?logo=gnome&logoColor=white)](https://extensionhub.pages.dev/)
-  [![License](https://img.shields.io/github/license/butu/extensionhub)](LICENSE)
-  [![Symfony](https://img.shields.io/badge/Symfony-7.4-000000?logo=symfony)](https://symfony.com/)
-  [![GNOME Shell](https://img.shields.io/badge/GNOME-Shell_extensions-4a86cf?logo=gnome&logoColor=white)](https://extensions.gnome.org/)
+  <a href="https://extension-hub.pages.dev/"><img src="https://img.shields.io/badge/website-extension--hub.pages.dev-3584e4?logo=gnome&amp;logoColor=white" alt="Live site"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/butu/extensionhub" alt="License"></a>
+  <a href="https://symfony.com/"><img src="https://img.shields.io/badge/Symfony-7.4-000000?logo=symfony" alt="Symfony"></a>
+  <a href="https://extensions.gnome.org/"><img src="https://img.shields.io/badge/GNOME-Shell_extensions-4a86cf?logo=gnome&amp;logoColor=white" alt="GNOME Shell"></a>
 </div>
 
 ## 📋 Features
@@ -19,7 +19,7 @@ Extension Hub provides:
 
 ## 🌐 Browse extensions
 
-Visit [extensionhub.pages.dev](https://extensionhub.pages.dev/) to browse the
+Visit [extension-hub.pages.dev](https://extension-hub.pages.dev/) to browse the
 directory.
 
 Extension Hub imports metadata from
@@ -32,11 +32,11 @@ indexing requires a server-side `GITHUB_TOKEN`.
 
 The JSON snapshots are public and require no authentication:
 
-- [`extensions.v2.json`](https://extensionhub.pages.dev/data/extensions.v2.json)
+- [`extensions.v2.json`](https://extension-hub.pages.dev/data/extensions.v2.json)
   — versioned feed; recommended for integrations
-- [`extensions.json`](https://extensionhub.pages.dev/data/extensions.json) —
+- [`extensions.json`](https://extension-hub.pages.dev/data/extensions.json) —
   unversioned alias of the current feed
-- [`comments.json`](https://extensionhub.pages.dev/data/comments.json) —
+- [`comments.json`](https://extension-hub.pages.dev/data/comments.json) —
   exported extension comments
 
 The extension feed includes its schema version and generation timestamp.

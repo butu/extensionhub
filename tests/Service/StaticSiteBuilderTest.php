@@ -501,8 +501,8 @@ class StaticSiteBuilderTest extends KernelTestCase
         $target = self::$kernel->getProjectDir() . '/' . $output;
         $sitemap = file_get_contents($target . '/sitemap.xml');
 
-        self::assertStringContainsString('<loc>https://extensionhub.pages.dev/</loc>', $sitemap);
-        self::assertStringContainsString('<loc>https://extensionhub.pages.dev/use-the-data</loc>', $sitemap);
+        self::assertStringContainsString('<loc>https://extension-hub.pages.dev/</loc>', $sitemap);
+        self::assertStringContainsString('<loc>https://extension-hub.pages.dev/use-the-data</loc>', $sitemap);
     }
 
     public function testSitemapIsWellFormedXml(): void
@@ -539,7 +539,7 @@ class StaticSiteBuilderTest extends KernelTestCase
         $sitemap = file_get_contents($fixtureProjectDir . '/dist/sitemap.xml');
 
         self::assertStringContainsString(
-            '<loc>https://extensionhub.pages.dev/extension/lockscreen-extension%40pratap.fastmail.fm</loc>',
+            '<loc>https://extension-hub.pages.dev/extension/lockscreen-extension%40pratap.fastmail.fm</loc>',
             $sitemap
         );
         self::assertStringContainsString('<lastmod>2026-04-29T22:29:20+00:00</lastmod>', $sitemap);
@@ -556,7 +556,7 @@ class StaticSiteBuilderTest extends KernelTestCase
         $builder->build('dist');
 
         $sitemap = file_get_contents($fixtureProjectDir . '/dist/sitemap.xml');
-        $urlBlockStart = strpos($sitemap, '<loc>https://extensionhub.pages.dev/extension/no-updated-at%40example.com</loc>');
+        $urlBlockStart = strpos($sitemap, '<loc>https://extension-hub.pages.dev/extension/no-updated-at%40example.com</loc>');
         self::assertNotFalse($urlBlockStart);
 
         $urlBlockEnd = strpos($sitemap, '</url>', $urlBlockStart);

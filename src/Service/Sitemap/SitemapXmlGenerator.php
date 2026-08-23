@@ -12,7 +12,7 @@ namespace App\Service\Sitemap;
  */
 final class SitemapXmlGenerator
 {
-    public const SITE_BASE_URL = 'https://extensionhub.pages.dev';
+    public const SITE_BASE_URL = 'https://extension-hub.pages.dev';
 
     /**
      * @param array<string, mixed> $extensionsData decoded public/data/extensions.json content
