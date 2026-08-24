@@ -1873,13 +1873,15 @@
     column-gap: 22px;
 }
 
+/* Firefox ignores flex-basis during intrinsic sizing of this cluster.
+   Explicit floors keep its metrics from pushing the action outside the row. */
 .eh-rating-slot {
     flex: 0 0 150px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 7px;
-    min-width: 0;
+    min-width: 150px;
 }
 
 .eh-stars {
@@ -1954,8 +1956,10 @@
     white-space: nowrap;
 }
 
+/* A floor preserves space for short labels while long labels can still grow. */
 .eh-action-slot {
-    flex: 0 0 100px;
+    flex: 0 0 auto;
+    min-width: 100px;
     display: flex;
     justify-content: flex-end;
 }
@@ -2035,8 +2039,11 @@
         column-gap: 12px;
     }
 
+    /* Mobile sizes this slot from its content, so it must stay shrinkable:
+       the desktop 150px floor would be a floor here too. */
     .eh-rating-slot {
         flex: 0 1 auto;
+        min-width: 0;
         justify-content: flex-start;
     }
 
