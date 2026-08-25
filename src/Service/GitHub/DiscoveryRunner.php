@@ -33,6 +33,13 @@ final class DiscoveryRunner
 
     private const PER_PAGE = 100;
 
+    /**
+     * Stop the run while this many API requests remain, instead of running
+     * into the hard 403 abort: a single candidate costs at most ~10 calls,
+     * so the reserve covers one more page of candidates plus buffer.
+     */
+    public const RATE_LIMIT_RESERVE = 100;
+
     public function __construct(
         private readonly ApiClient $apiClient,
         private readonly CandidateProcessor $candidateProcessor,
@@ -51,6 +58,7 @@ final class DiscoveryRunner
         $seenRepositoryIds = [];
         $persistedCount = 0;
         $skipReasonCounts = [];
+        $stoppedForLowRateLimit = false;
 
         foreach (self::SEARCH_QUERIES as $query) {
             [$hitCount, $pageCount] = $this->discoverQuery(
@@ -59,9 +67,14 @@ final class DiscoveryRunner
                 $seenRepositoryIds,
                 $persistedCount,
                 $skipReasonCounts,
+                $stoppedForLowRateLimit,
             );
             $hitCountByQuery[$query] = $hitCount;
             $pageCountByQuery[$query] = $pageCount;
+
+            if ($stoppedForLowRateLimit) {
+                break;
+            }
         }
 
         $skippedCount = array_sum($skipReasonCounts);
@@ -73,7 +86,15 @@ final class DiscoveryRunner
             $persistedCount,
             $skippedCount,
             $skipReasonCounts,
+            $stoppedForLowRateLimit,
         );
+    }
+
+    private function rateLimitReserveHit(): bool
+    {
+        $remaining = $this->apiClient->rateLimitRemaining();
+
+        return $remaining !== null && $remaining < self::RATE_LIMIT_RESERVE;
     }
 
     /**
@@ -88,11 +109,17 @@ final class DiscoveryRunner
         array &$seenRepositoryIds,
         int &$persistedCount,
         array &$skipReasonCounts,
+        bool &$stoppedForLowRateLimit,
     ): array {
         $totalHits = 0;
         $pagesFetched = 0;
 
         for ($page = 1; $page <= $this->maxPagesPerQuery; $page++) {
+            if ($this->rateLimitReserveHit()) {
+                $stoppedForLowRateLimit = true;
+                break;
+            }
+
             $response = $this->apiClient->get($token, 'search/repositories', [
                 'q' => $query,
                 'per_page' => self::PER_PAGE,
@@ -107,6 +134,11 @@ final class DiscoveryRunner
             $pagesFetched++;
 
             foreach ($items as $item) {
+                if ($this->rateLimitReserveHit()) {
+                    $stoppedForLowRateLimit = true;
+                    break 2;
+                }
+
                 $this->processItem($token, $item, $seenRepositoryIds, $persistedCount, $skipReasonCounts);
             }
 

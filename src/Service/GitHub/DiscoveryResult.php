@@ -23,6 +23,7 @@ final class DiscoveryResult
         public readonly int $persistedCount = 0,
         public readonly int $skippedCount = 0,
         public readonly array $skipReasonCounts = [],
+        public readonly bool $stoppedForLowRateLimit = false,
     ) {
     }
 }

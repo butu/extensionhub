@@ -19,10 +19,28 @@ final class ApiClient
     private const USER_AGENT = 'ExtensionHub-GitHub-Extension-Indexer';
     private const API_VERSION = '2022-11-28';
 
+    private ?int $lastRateLimitRemaining = null;
+    private ?int $lastRateLimitReset = null;
+
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly ApiCache $cache,
     ) {
+    }
+
+    /**
+     * Primary rate limit budget as last reported by GitHub, null while no
+     * response carried the header yet. Long-running runners poll this to
+     * stop gracefully before hitting the hard 403 abort.
+     */
+    public function rateLimitRemaining(): ?int
+    {
+        return $this->lastRateLimitRemaining;
+    }
+
+    public function rateLimitReset(): ?int
+    {
+        return $this->lastRateLimitReset;
     }
 
     /**
@@ -61,6 +79,7 @@ final class ApiClient
                 'headers' => $headers,
             ]);
             $statusCode = $response->getStatusCode();
+            $this->trackRateLimit($response);
         } catch (HttpClientExceptionInterface $exception) {
             throw new ApiException('GitHub API request failed: transport error.', 0, $exception);
         }
@@ -113,6 +132,26 @@ final class ApiClient
         $remaining = $response->getHeaders(false)['x-ratelimit-remaining'][0] ?? null;
 
         return $remaining === '0';
+    }
+
+    /**
+     * Remembers the budget headers of the latest response (present on every
+     * GitHub API response, 304 included) so runners can stop on their own
+     * terms instead of waiting for the hard 403.
+     */
+    private function trackRateLimit(ResponseInterface $response): void
+    {
+        $headers = $response->getHeaders(false);
+
+        $remaining = $headers['x-ratelimit-remaining'][0] ?? null;
+        if ($remaining !== null && preg_match('/^\d+$/', $remaining) === 1) {
+            $this->lastRateLimitRemaining = (int) $remaining;
+        }
+
+        $reset = $headers['x-ratelimit-reset'][0] ?? null;
+        if ($reset !== null && preg_match('/^\d+$/', $reset) === 1) {
+            $this->lastRateLimitReset = (int) $reset;
+        }
     }
 
     /**

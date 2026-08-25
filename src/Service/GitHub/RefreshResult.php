@@ -15,6 +15,7 @@ final class RefreshResult
         public readonly int $refreshedCount,
         public readonly int $skippedCount = 0,
         public readonly array $skipReasonCounts = [],
+        public readonly bool $stoppedForLowRateLimit = false,
     ) {
     }
 }

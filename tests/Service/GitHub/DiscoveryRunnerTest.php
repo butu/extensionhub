@@ -292,6 +292,32 @@ class DiscoveryRunnerTest extends TestCase
         self::assertSame(0, $result->skippedCount);
     }
 
+    /**
+     * The search response itself reports a nearly exhausted budget, so the
+     * runner stops before processing any candidate of that page instead of
+     * running into the hard 403 abort (any further request would exhaust
+     * the mock queue and fail the test).
+     */
+    public function testDiscoveryStopsBeforeProcessingCandidatesWhenTheRateLimitReserveIsHit(): void
+    {
+        $httpClient = new MockHttpClient([
+            new JsonMockResponse(
+                ['items' => [$this->searchItem(), $this->searchItem(['id' => 2])]],
+                ['response_headers' => ['x-ratelimit-remaining' => '50']],
+            ),
+        ]);
+
+        [$persister, $persistedHolder] = $this->makePersister();
+        $runner = $this->runner($httpClient, $persister);
+        $result = $runner->discover('token');
+
+        self::assertTrue($result->stoppedForLowRateLimit);
+        self::assertSame(0, $result->persistedCount);
+        self::assertSame(0, $result->skippedCount);
+        self::assertSame(1, $httpClient->getRequestsCount());
+        self::assertCount(0, $persistedHolder->items);
+    }
+
     public function testPaginatesUntilAShortPageAndDeduplicatesAcrossPages(): void
     {
         $queries = DiscoveryRunner::SEARCH_QUERIES;

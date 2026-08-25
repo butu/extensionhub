@@ -80,6 +80,7 @@ class UpdateGithubExtensionsCommandTest extends TestCase
             new CandidateLoader($apiClient, new MetadataValidator()),
             $this->candidateProcessor($apiClient, $httpClient),
             $persister,
+            $apiClient,
         );
     }
 

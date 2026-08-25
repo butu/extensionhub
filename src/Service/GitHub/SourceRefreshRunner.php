@@ -23,11 +23,19 @@ final class SourceRefreshRunner
     public const SKIP_REPOSITORY_NOT_FOUND = 'repository_not_found';
     public const SKIP_CANDIDATE_LOAD_FAILED = 'candidate_load_failed';
 
+    /**
+     * Stop the run while this many API requests remain, instead of running
+     * into the hard 403 abort: a single source costs at most ~10 calls, so
+     * the reserve covers one more source plus buffer.
+     */
+    public const RATE_LIMIT_RESERVE = 100;
+
     public function __construct(
         private readonly ExtensionSourceRepository $sourceRepository,
         private readonly CandidateLoader $candidateLoader,
         private readonly CandidateProcessor $candidateProcessor,
         private readonly SourcePersister $persister,
+        private readonly ApiClient $apiClient,
     ) {
     }
 
@@ -36,8 +44,14 @@ final class SourceRefreshRunner
         $sources = $this->sourceRepository->findAllGithubSourcesForRefresh();
         $refreshedCount = 0;
         $skipReasonCounts = [];
+        $stoppedForLowRateLimit = false;
 
         foreach ($sources as $source) {
+            if ($this->rateLimitReserveHit()) {
+                $stoppedForLowRateLimit = true;
+                break;
+            }
+
             $this->refreshOne($token, $source, $refreshedCount, $skipReasonCounts);
         }
 
@@ -46,7 +60,15 @@ final class SourceRefreshRunner
             $refreshedCount,
             array_sum($skipReasonCounts),
             $skipReasonCounts,
+            $stoppedForLowRateLimit,
         );
+    }
+
+    private function rateLimitReserveHit(): bool
+    {
+        $remaining = $this->apiClient->rateLimitRemaining();
+
+        return $remaining !== null && $remaining < self::RATE_LIMIT_RESERVE;
     }
 
     /**

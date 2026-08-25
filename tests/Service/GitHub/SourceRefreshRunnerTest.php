@@ -4,6 +4,7 @@ namespace App\Tests\Service\GitHub;
 
 use App\Entity\Extension;
 use App\Entity\ExtensionSource;
+use App\Entity\SourceMetricMeasurement;
 use App\Repository\ExtensionSourceRepository;
 use App\Repository\SourceMetricMeasurementRepository;
 use App\Service\GitHub\ApiCache;
@@ -62,7 +63,7 @@ class SourceRefreshRunnerTest extends TestCase
     /**
      * @return array{0: SourcePersister, 1: object{items: object[]}}
      */
-    private function makePersister(): array
+    private function makePersister(?array &$measuredMetrics = null): array
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);
         $sourceRepository = $this->createMock(ExtensionSourceRepository::class);
@@ -81,6 +82,14 @@ class SourceRefreshRunnerTest extends TestCase
         $entityManager->method('persist')->willReturnCallback(function (object $entity) use ($persistedHolder): void {
             $persistedHolder->items[] = $entity;
         });
+
+        $metricRepository->method('recordMeasurement')->willReturnCallback(
+            function ($source, string $metricType, float $value) use (&$measuredMetrics): void {
+                if (is_array($measuredMetrics)) {
+                    $measuredMetrics[$metricType] = $value;
+                }
+            },
+        );
 
         $persister = new SourcePersister($entityManager, $sourceRepository, $metricRepository, new SourceMapper());
 
@@ -113,7 +122,7 @@ class SourceRefreshRunnerTest extends TestCase
             new IconResolver($apiClient, new ImageProbe($httpClient, $imageValidator), $imageValidator),
         );
 
-        return new SourceRefreshRunner($sourceRepository, $candidateLoader, $candidateProcessor, $persister);
+        return new SourceRefreshRunner($sourceRepository, $candidateLoader, $candidateProcessor, $persister, $apiClient);
     }
 
     /** Head-commit response the screenshot resolver asks for first. */
@@ -167,18 +176,7 @@ class SourceRefreshRunnerTest extends TestCase
 
     private function repositoryResponse(array $overrides = []): JsonMockResponse
     {
-        return new JsonMockResponse(array_merge([
-            'id' => 1,
-            'full_name' => 'owner/repo',
-            'html_url' => 'https://github.com/owner/repo',
-            'description' => 'A gnome shell extension',
-            'stargazers_count' => 10,
-            'forks_count' => 2,
-            'archived' => false,
-            'private' => false,
-            'pushed_at' => '2026-01-01T00:00:00Z',
-            'owner' => ['login' => 'owner', 'html_url' => 'https://github.com/owner'],
-        ], $overrides));
+        return new JsonMockResponse($this->repositoryData($overrides));
     }
 
     private function metadataContentResponse(
@@ -325,6 +323,172 @@ class SourceRefreshRunnerTest extends TestCase
         self::assertSame(1, $result->refreshedCount);
         self::assertSame($existingScreenshot, $persistedHolder->items[1]->displayScreenshot);
         self::assertSame($existingIcon, $persistedHolder->items[1]->displayIcon);
+    }
+
+    /**
+     * A source whose stored lastCommitAt still matches the freshly reported
+     * pushed_at is refreshed from that single repository call alone: no
+     * metadata, release, screenshot, or icon request happens (any extra
+     * request would exhaust the mock queue and fail), while stars and forks
+     * are re-measured from the fresh response.
+     */
+    public function testUnchangedSourceSkipsTheDeepFetchAndStillMeasuresFreshStars(): void
+    {
+        $source = $this->knownSource('1');
+        $source->extension = new Extension();
+        $source->extension->uuid = 'repo@owner';
+        $source->displayName = 'Stored Name';
+        $source->displayDescription = 'Stored description';
+        $source->installUrl = 'https://github.com/owner/repo/releases/download/v1.0.0/repo.zip';
+        $source->supportedShellVersions = ['45'];
+        $source->lastReleaseAt = new \DateTime('2026-02-01T00:00:00Z');
+        $source->lastCommitAt = new \DateTime('2026-01-01T00:00:00Z');
+
+        $httpClient = new MockHttpClient([
+            $this->repositoryResponse(['stargazers_count' => 42, 'forks_count' => 7]),
+        ]);
+
+        $metrics = [];
+        [$persister, $persistedHolder] = $this->makePersister($metrics);
+        $result = $this->runner($httpClient, $persister, [$source])->refresh('token');
+
+        self::assertSame(1, $result->refreshedCount);
+        self::assertSame(0, $result->skippedCount);
+        self::assertFalse($result->stoppedForLowRateLimit);
+        self::assertSame(1, $httpClient->getRequestsCount());
+
+        /** @var ExtensionSource $persistedSource */
+        $persistedSource = $persistedHolder->items[1];
+        self::assertInstanceOf(ExtensionSource::class, $persistedSource);
+        self::assertSame('Stored Name', $persistedSource->displayName);
+        self::assertSame(
+            'https://github.com/owner/repo/releases/download/v1.0.0/repo.zip',
+            $persistedSource->installUrl,
+        );
+        self::assertSame(
+            (new \DateTime('2026-01-01T00:00:00Z'))->getTimestamp(),
+            $persistedSource->lastCommitAt?->getTimestamp(),
+        );
+
+        self::assertSame([
+            SourceMetricMeasurement::METRIC_STARS => 42.0,
+            SourceMetricMeasurement::METRIC_FORKS => 7.0,
+        ], $metrics);
+    }
+
+    /**
+     * A pushed_at newer than the stored lastCommitAt forces the full flow:
+     * the deep fetch queue must be consumed completely.
+     */
+    public function testSourceWithNewerPushedAtRunsTheFullDeepFlowAgain(): void
+    {
+        $source = $this->knownSource('1');
+        $source->extension = new Extension();
+        $source->extension->uuid = 'repo@owner';
+        $source->displayName = 'Stored Name';
+        $source->installUrl = 'https://github.com/owner/repo/releases/download/v0.9.0/old.zip';
+        $source->lastCommitAt = new \DateTime('2025-12-31T00:00:00Z');
+
+        $httpClient = new MockHttpClient([
+            $this->repositoryResponse(),
+            $this->metadataContentResponse(name: 'Fresh Metadata Name'),
+            $this->releasesResponse([$this->zipRelease()]),
+            ...$this->noScreenshotResponses(),
+            ...$this->noIconResponses(),
+        ]);
+
+        [$persister, $persistedHolder] = $this->makePersister();
+        $result = $this->runner($httpClient, $persister, [$source])->refresh('token');
+
+        self::assertSame(1, $result->refreshedCount);
+        self::assertGreaterThanOrEqual(6, $httpClient->getRequestsCount());
+        /** @var ExtensionSource $persistedSource */
+        $persistedSource = $persistedHolder->items[1];
+        self::assertInstanceOf(ExtensionSource::class, $persistedSource);
+        self::assertSame('Fresh Metadata Name', $persistedSource->displayName);
+        self::assertSame(
+            'https://github.com/owner/repo/releases/download/v1.0.0/repo.zip',
+            $persistedSource->installUrl,
+        );
+    }
+
+    /**
+     * The cheap path needs a canonical extension uuid; a source without one
+     * (and a matching timestamp) falls back to the full loading flow.
+     */
+    public function testUnchangedSourceWithoutUuidFallsBackToTheFullFlow(): void
+    {
+        $source = $this->knownSource('1');
+        $source->displayName = 'Stored Name';
+        $source->lastCommitAt = new \DateTime('2026-01-01T00:00:00Z');
+
+        $httpClient = new MockHttpClient([
+            $this->repositoryResponse(),
+            $this->metadataContentResponse(uuid: 'fresh@owner'),
+            $this->releasesResponse([]),
+            ...$this->noScreenshotResponses(),
+            ...$this->noIconResponses(),
+        ]);
+
+        [$persister, $persistedHolder] = $this->makePersister();
+        $result = $this->runner($httpClient, $persister, [$source])->refresh('token');
+
+        self::assertSame(1, $result->refreshedCount);
+        /** @var ExtensionSource $persistedSource */
+        $persistedSource = $persistedHolder->items[1];
+        self::assertInstanceOf(ExtensionSource::class, $persistedSource);
+        self::assertSame('fresh@owner', $persistedHolder->items[0]->uuid);
+    }
+
+    /**
+     * Once GitHub reports fewer remaining requests than the reserve, the
+     * loop stops before the next source instead of running into the hard
+     * 403 abort: the second source is never requested.
+     */
+    public function testRunStopsEarlyWhenTheRateLimitReserveIsHit(): void
+    {
+        $sources = [$this->unchangedCheapSource(), $this->unchangedCheapSource()];
+
+        $httpClient = new MockHttpClient([
+            new JsonMockResponse($this->repositoryData(), ['response_headers' => [
+                'x-ratelimit-remaining' => '50',
+            ]]),
+        ]);
+
+        [$persister] = $this->makePersister();
+        $result = $this->runner($httpClient, $persister, $sources)->refresh('token');
+
+        self::assertSame(2, $result->knownSourceCount);
+        self::assertSame(1, $result->refreshedCount);
+        self::assertSame(0, $result->skippedCount);
+        self::assertTrue($result->stoppedForLowRateLimit);
+        self::assertSame(1, $httpClient->getRequestsCount());
+    }
+
+    private function unchangedCheapSource(): ExtensionSource
+    {
+        $source = $this->knownSource('1');
+        $source->extension = new Extension();
+        $source->extension->uuid = 'repo@owner';
+        $source->lastCommitAt = new \DateTime('2026-01-01T00:00:00Z');
+
+        return $source;
+    }
+
+    private function repositoryData(array $overrides = []): array
+    {
+        return array_merge([
+            'id' => 1,
+            'full_name' => 'owner/repo',
+            'html_url' => 'https://github.com/owner/repo',
+            'description' => 'A gnome shell extension',
+            'stargazers_count' => 10,
+            'forks_count' => 2,
+            'archived' => false,
+            'private' => false,
+            'pushed_at' => '2026-01-01T00:00:00Z',
+            'owner' => ['login' => 'owner', 'html_url' => 'https://github.com/owner'],
+        ], $overrides);
     }
 
     public function testTransientReadmeFailureDoesNotDeleteAStoredScreenshot(): void

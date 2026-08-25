@@ -36,6 +36,11 @@ final class CandidateProcessor
      * {@see RepositoryEligibilityChecker::evaluate()}; only
      * {@see TargetedRepositoryLoader} passes false.
      *
+     * A known source whose freshly reported pushed_at still matches its
+     * stored lastCommitAt is rebuilt from the stored deep facts (metadata,
+     * release, screenshot, icon) without any of those API calls — the fresh
+     * repository facts alone keep stars/forks and canonical fields current.
+     *
      * @throws ApiException only when the failure is rate-limited; any other
      *                       API failure while loading metadata, releases,
      *                       the screenshot, or the icon is turned into a
@@ -50,6 +55,13 @@ final class CandidateProcessor
         $eligibility = $this->eligibilityChecker->evaluate($repository->summary(), $requireMinimumStars);
         if (!$eligibility->eligible) {
             return CandidateProcessResult::skip($eligibility->skipReason);
+        }
+
+        if ($existing !== null && $this->unchangedSinceLastRefresh($existing, $repository)) {
+            $candidate = $this->candidateFromKnownSource($existing, $repository);
+            if ($candidate !== null) {
+                return CandidateProcessResult::success($candidate);
+            }
         }
 
         $ownerAndRepo = $this->splitFullName($repository->fullName);
@@ -98,6 +110,57 @@ final class CandidateProcessor
             screenshotUrl: $screenshotUrl,
             iconUrl: $iconUrl,
         ));
+    }
+
+    /**
+     * The refresh flow always re-loads repository facts first (stars and
+     * forks must be measured on every run), so a stored source whose
+     * lastCommitAt equals the freshly reported pushed_at cannot have gained
+     * new commits, tags, README images, or metadata.json content since.
+     * Timestamps are compared as instants, immune to timezone display.
+     */
+    private function unchangedSinceLastRefresh(ExtensionSource $source, RepositoryDetails $repository): bool
+    {
+        return $source->lastCommitAt !== null
+            && $repository->pushedAt !== null
+            && $source->lastCommitAt->getTimestamp() === $repository->pushedAt->getTimestamp();
+    }
+
+    /**
+     * Rebuilds a candidate from the stored deep facts plus the fresh
+     * repository facts, or null when the stored data is insufficient (no
+     * canonical extension/uuid yet), making the caller fall back to the
+     * full loading path.
+     */
+    private function candidateFromKnownSource(ExtensionSource $source, RepositoryDetails $repository): ?ExtensionCandidate
+    {
+        $uuid = $source->extension?->uuid;
+        if ($uuid === null || $uuid === '') {
+            return null;
+        }
+
+        return new ExtensionCandidate(
+            repositoryId: $repository->id,
+            fullName: $repository->fullName,
+            htmlUrl: $repository->htmlUrl,
+            stargazersCount: $repository->stargazersCount,
+            forksCount: $repository->forksCount,
+            uuid: $uuid,
+            // Stored shell versions are already normalized; re-normalizing
+            // keeps them stable through the mapper.
+            shellVersion: $source->supportedShellVersions ?? [],
+            description: $repository->description,
+            ownerLogin: $repository->ownerLogin,
+            ownerHtmlUrl: $repository->ownerHtmlUrl,
+            metadataName: $source->displayName,
+            metadataDescription: $source->displayDescription,
+            repositoryCreatedAt: $repository->createdAt,
+            lastCommitAt: $repository->pushedAt,
+            installUrl: $source->installUrl,
+            lastReleaseAt: $source->lastReleaseAt,
+            screenshotUrl: $source->displayScreenshot,
+            iconUrl: $source->displayIcon,
+        );
     }
 
     /**

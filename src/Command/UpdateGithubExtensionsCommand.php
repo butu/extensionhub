@@ -106,6 +106,13 @@ class UpdateGithubExtensionsCommand extends Command
                     $result->persistedCount,
                     $result->skippedCount
                 ));
+                if ($result->stoppedForLowRateLimit) {
+                    $io->warning(sprintf(
+                        'Discovery stopped early: fewer than %d GitHub API requests remained. '
+                        . 'Unprocessed candidates stay for the next run.',
+                        DiscoveryRunner::RATE_LIMIT_RESERVE
+                    ));
+                }
             }
 
             if ($runRefresh) {
@@ -118,6 +125,18 @@ class UpdateGithubExtensionsCommand extends Command
                         $result->refreshedCount,
                         $result->knownSourceCount,
                         $result->skippedCount
+                    ));
+                }
+                if ($result->stoppedForLowRateLimit) {
+                    $unprocessed = max(
+                        0,
+                        $result->knownSourceCount - $result->refreshedCount - $result->skippedCount
+                    );
+                    $io->warning(sprintf(
+                        'Refresh stopped early: fewer than %d GitHub API requests remained. '
+                        . '%d source(s) not reached this run, they stay for the next run.',
+                        SourceRefreshRunner::RATE_LIMIT_RESERVE,
+                        $unprocessed
                     ));
                 }
             }
