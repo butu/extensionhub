@@ -37,6 +37,8 @@ final class SourcePersister
 
     public function persistCandidate(ExtensionCandidate $candidate, DateTimeInterface $now): SourcePersistResult
     {
+        $this->entityManager->getConnection()->close();
+
         $extension = $this->entityManager->getRepository(Extension::class)->findOneBy(['uuid' => $candidate->uuid]);
         $isNewExtension = $extension === null;
 
