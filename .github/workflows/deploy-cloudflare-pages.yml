@@ -3,9 +3,9 @@ name: Deploy Cloudflare Pages
 on:
   workflow_dispatch: {}
   schedule:
-    # 03:17 UTC daily — after the server-side cron (app:update-extensions,
+    # 07:00 UTC daily — after the server-side cron (app:update-extensions,
     # app:parse-comments, app:build-extension-snapshot) has finished.
-    - cron: '17 3 * * *'
+    - cron: '0 7 * * *'
   push:
     branches:
       - master
